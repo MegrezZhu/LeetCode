@@ -1,23 +1,20 @@
 class Solution {
-	vector<int> res;
-	vector<int> ratings;
-	int calculate(int pos) {
-		if (pos < 0 || pos >= res.size()) return 0;
-		if (res[pos] != -1) return res[pos];
-		int left = get(pos - 1) < get(pos) ? calculate(pos - 1) : 0;
-		int right = get(pos + 1) < get(pos) ? calculate(pos + 1) : 0;
-		return res[pos] = max(left, right) + 1;
-	}
-	int get(int pos) {
-		return (pos < 0 || pos >= ratings.size()) ? 1e9 : ratings[pos];
-	}
 public:
-	int candy(vector<int>& ratings) {
-		this->ratings = ratings;
-		res.clear();
-		res.resize(ratings.size(), -1);
-		int ans = 0;
-		for (int i = 0; i < res.size(); i++) ans += calculate(i);
-		return ans;
-	}
+    int candy(const vector<int>& ratings) {
+        int n = ratings.size();
+        vector<int> candy(n, -1);
+        for (int i = 0; i < n; i++)
+            have(ratings, candy, i);
+        int sum = 0;
+        for (int x : candy) sum += x;
+        return sum;
+    }
+    int have(const vector<int> &ratings, vector<int> &candy, int id) {
+        if (candy[id] != -1) return candy[id];
+        int num = 1;
+        if (id > 0 && ratings[id] > ratings[id - 1]) num = max(num, have(ratings, candy, id - 1) + 1);
+        if (id < ratings.size() - 1 && ratings[id] > ratings[id + 1]) num = max(num, have(ratings, candy, id + 1) + 1);
+        candy[id] = num;
+        return num;
+    }
 };
