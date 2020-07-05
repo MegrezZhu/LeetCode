@@ -1,0 +1,26 @@
+# Definition for a binary tree node.
+# class TreeNode:
+#     def __init__(self, val=0, left=None, right=None):
+#         self.val = val
+#         self.left = left
+#         self.right = right
+class Solution:
+    def maxSumBST(self, root: TreeNode) -> int:
+        ret = self.convert(root)
+        return ret[-1]
+    
+    def convert(self, root: TreeNode):
+        if root is None:
+            return True, True, 1e9, -1e9, 0, 0 # is_bst, is_empty, min, max, sum, max_sum_of_bst
+
+        l_is_bst, l_is_empty, l_min, l_max, l_sum, l_ans = self.convert(root.left)
+        r_is_bst, r_is_empty, r_min, r_max, r_sum, r_ans = self.convert(root.right)
+        
+        is_empty = False
+        is_bst = (l_is_empty or l_is_bst) and (r_is_empty or r_is_bst) and (root.val > l_max) and (root.val < r_min)
+        _min = min(l_min, root.val)
+        _max = max(root.val, r_max)
+        _sum = sum([l_sum, r_sum, root.val])
+        ans = max(l_ans, r_ans, _sum if is_bst else 0)
+        
+        return is_bst, is_empty, _min, _max, _sum, ans
